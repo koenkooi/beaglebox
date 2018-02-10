@@ -13,26 +13,22 @@ edge_thickness = 1.6;
 bottom_thickness = 3;
 border_size = edge_thickness + 6;
 
-base_height = 15;
+// mini usb height
+sh=5;
+
+base_height = 21;
 
 // Number of facets in curves, 32 is a good tradeoff between looks and processing speed
 $fn=32;
 
-// helper sizes, disable for final rendering
-//color([0,0,1]) helper(inside_width,inside_length,edge_thickness);
+
 
 translate(v=[0,0,0]) box(inside_width, inside_length, bottom_thickness, base_height, border_size, edge_thickness);
-
-
-module helper(inside_width,inside_length,edge_thickness) {
-	translate(v=[edge_thickness,edge_thickness,-edge_thickness*2]) cube([inside_width,inside_length,edge_thickness], center=false);
-	translate(v=[edge_thickness,edge_thickness,20]) cube([edge_thickness,inside_length,edge_thickness], center=false);
-}
-
+translate(v=[edge_thickness-1.7,edge_thickness+0.2,sh - 0.95]) color([0.3,0.3,0.3]) bbb();
+translate(v=[0,80,0]) gps(edge_thickness);
 
 module box(iw, il, bt, base_height, bs, et ) {
-	// mini usb height
-	sh=5;
+
 	pcbt= 2;
 	extra_height = 0;
 
@@ -44,50 +40,27 @@ module box(iw, il, bt, base_height, bs, et ) {
 	radius2=25.4/2;
 
 	difference() {
-		// outside part
-		union() {
-			// the corner radii are different, so we build it in 2 parts using intersection()
-			intersection() {
-				minkowski(){
-					translate(v=[radius, radius, 0]) cube([iw - 2 * radius + 2*et ,il - 2 * radius + 2*et, box_height], center=false);
-					cylinder(r=radius,h=1);
-				}
-				translate(v=[-et/2,-et/2, -box_height* 0.3]) cube([box_width/2 + 2*et, box_length * 1.1, box_height * 1.5]);	
-			}
+		// outside part, the actual box
+        hull() {
+            translate(v=[inside_width - radius2 + et *2,radius2,0]) cylinder(r=radius2,h=box_height * 1.5);    
+            translate(v=[inside_width - radius2 + et*2, inside_length - radius2 + et*2,0]) cylinder(r=radius2,h=box_height * 1.5);
+            translate(v=[radius,radius,0]) cylinder(r=radius,h=box_height * 1.5);    
+            translate(v=[radius,inside_length - radius +et*2]) cylinder(r=radius,h=box_height * 1.5); 
+        }   
 		
-			// the corner radii are different, so we build it in 2 parts using intersection()
-			intersection() {
-				minkowski(){
-					translate(v=[radius2, radius2, 0]) cube([iw - 2 * radius2 + 2*et ,il - 2 * radius2 + 2*et, box_height], center=false);
-					cylinder(r=radius2,h=1);
-				}
-				translate(v=[iw/2 ,-et/2, -box_height* 0.3]) cube([box_width/2 + 2*et, box_length * 1.1, box_height * 1.5]);	
-			}
-     	}
+
         translate(v = [et +15.5, et+ il -3.5,-0.01]) {cylinder(r=1.5,h=2*sh); m3nut();}
         translate(v = [et +15.5, et +3.5,-0.01]) {cylinder(r=1.5,h=2*sh); m3nut();}
         translate(v = [et +iw -6, et +il -6.5,-0.01]) {cylinder(r=1.5,h=2*sh); m3nut();}
         translate(v = [et +iw -6, et +6.5,-0.01]) {cylinder(r=1.5,h=2*sh); m3nut();}
         
-		// inside part
-		translate(v=[et, et, bt]) union() {
-			// the corner radii are different, so we build it in 2 parts using intersection()
-			intersection() {
-				minkowski(){
-					translate(v=[radius, radius, 0]) cube([iw - 2 * radius,il - 2 * radius, box_height], center=false);
-					cylinder(r=radius,h=1);
-				}
-				translate(v=[-et/2,-et/2, -box_height* 0.3]) cube([box_width/2 + 2*et, box_length * 1.1, box_height * 1.5]);	
-			}
-		
-			// the corner radii are different, so we build it in 2 parts using intersection()
-			intersection() {
-				minkowski(){
-					translate(v=[radius2, radius2, 0]) cube([iw - 2 * radius2,il - 2 * radius2, box_height], center=false);
-					cylinder(r=radius2,h=1);
-				}
-				translate(v=[iw/2 ,-et/2, -box_height* 0.3]) cube([box_width/2 + 2*et, box_length * 1.1, box_height * 1.5]);	
-			}
+		// inside part, the BBB
+		translate(v=[et, et, bt]) { hull() {
+                translate(v=[inside_width - radius2,radius2,0]) cylinder(r=radius2,h=box_height * 1.5);    
+                translate(v=[inside_width - radius2 , inside_length - radius2,0]) cylinder(r=radius2,h=box_height * 1.5);
+                translate(v=[radius,radius,0]) cylinder(r=radius,h=box_height * 1.5);    
+                translate(v=[radius,inside_length - radius,0]) cylinder(r=radius,h=box_height * 1.5); 
+            }   
 		}
 
 		// bottom cutout
@@ -157,7 +130,7 @@ translate(v=[70,9,0]) rotate(a=[0,0,90]) screwslides();
 		        cube([et *3, usbwidth, usbheight], center=false);
 		     }
              cutout=37;
-             translate(v = [iw -1.01 , (il-cutout)/2 , bt - 3.6 ]) roundedcube(8,35,base_height,2);
+             translate(v = [iw -1.01 , (il-cutout)/2 , bt - 2.0 ]) roundedcube(8,35,base_height,2);
 		}
 
 	}
@@ -245,4 +218,48 @@ module roundedcube(x,y,z, radius=5){
         cube([x-2*radius,y-2*radius,z-1]);
         cylinder(r=radius,h=1);
     }
+}
+
+module bbb() {
+    import("../BEAGLEBONE_BLACK.STL");
+}
+
+module gps(et) {
+rim=et*2; 
+
+extra_heigth = 0;
+extra_bottom = 2;
+
+pcbwidth = 25.6;
+pcbheight = 34.2;
+pcbthickness = 1.65;
+
+pinwidth=23.5;
+pinx=(pcbwidth - pinwidth)/2;
+piny=1.9;
+
+battwidth = 14;
+battlength = 15;
+batx=(pcbwidth - battwidth)/2;
+baty=pcbheight - battlength;
+    
+schroefy=pcbheight - 2.54;
+schroefx=0.8*25.4;
+    
+    
+    difference() {
+        roundedcube(pcbwidth + rim*2 , pcbheight + rim*2, 6.5 + extra_heigth + extra_bottom);
+        translate(v=[rim-1,rim-1,3 + extra_heigth + extra_bottom]) roundedcube(pcbwidth + (rim - 2)*2 , pcbheight + (rim - 2)*2 , 5 + extra_heigth + extra_bottom,3);
+        //pcb
+        translate(v=[rim,rim,1.1 + extra_bottom ])roundedcube(pcbwidth , pcbheight , 2.5 + extra_heigth + extra_bottom,3);
+       //pcb support
+        translate(v=[rim + 0.5,rim + 0.5,1 ])roundedcube(pcbwidth - 1, pcbheight - 1 , 2.5 + extra_heigth + extra_bottom,3);       
+        //pins
+        translate(v=[rim + pinx,rim + piny,-9.01 + extra_bottom])roundedcube(pinwidth,2.8,10,0.9);
+        //battery
+        translate(v=[rim + batx,rim + baty,-3.01 + extra_bottom])roundedcube(battwidth,battlength,5,1);   
+    }
+    // pillars to fit into screw holes
+    translate(v=[rim + 0.1*25.4,rim+ schroefy,1]) cylinder(h=2+ extra_bottom,r=1.10,r1=1.26);
+    translate(v=[rim + 0.1*25.4 + schroefx,rim + schroefy,1]) cylinder(h=2+ extra_bottom,r=1.10,r1=1.26);
 }

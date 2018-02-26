@@ -205,10 +205,12 @@ hull() {
 }
 
 module roundedcube(x,y,z, radius=5){
-    translate(v=[radius,radius,0]) minkowski()
+    translate(v=[radius,radius,0]) hull()
     {
-        cube([x-2*radius,y-2*radius,z-1]);
-        cylinder(r=radius,h=1);
+        translate(v=[0,0,0]) cylinder(r=radius,h=z);
+        translate(v=[x - radius*2,0,0]) cylinder(r=radius,h=z);
+        translate(v=[x - radius*2,y - radius*2,0]) cylinder(r=radius,h=z);
+        translate(v=[0,y - radius*2,0]) cylinder(r=radius,h=z);
     }
 }
 

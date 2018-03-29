@@ -16,10 +16,10 @@ border_size = edge_thickness + 6;
 // mini usb height
 sh=5;
 
-base_height = 17;
+base_height = 21;
 
 // Number of facets in curves, 32 is a good tradeoff between looks and processing speed
-$fn=256;
+$fn=128;
 
 
 translate(v=[0,0,0]) box(inside_width, inside_length, bottom_thickness, base_height, border_size, edge_thickness);
@@ -77,16 +77,16 @@ module box(iw, il, bt, base_height, bs, et ) {
 		translate(v=[et,et,et]) {
 			//ethernet
 		     translate(v = [-et -0.01, 22.5, sh + pcbt - 0.5]) {
-		       cube([et*3, 16, 20], center=false);
+		       cube([et*3, 16, 14], center=false);
 		     }
 		     //power
 		     translate(v = [-et -0.01, 5, sh + pcbt]) {
-		       cube([et *2, 9.5, 20], center=false);
+		       cube([et *2, 9.5, 11], center=false);
 		     }
 		
 		     //mini-USB
-		     translate(v = [-et + -0.01, 41, 0 ]) {
-		       cube([et *2, 8, 4.5], center=false);
+		     translate(v = [-et + -0.01, 40.6, 0.5 ]) {
+		       cube([et *2, 8, sh], center=false);
 		     }
 		
 		      //microsd: 15mm long, 25.5mm corner offset
@@ -100,28 +100,30 @@ module box(iw, il, bt, base_height, bs, et ) {
 		        cube([et *3, 15, 4], center=false);
 		     }	
 		      //USB
-		     translate(v = [iw +0.01 - et, 10.5 , sh + pcbt]) {
-		        cube([et *3, 14, 20], center=false);
+             usbheight=8;
+             usbwidth=14.5;
+		     translate(v = [iw +0.01 - et, 9.5 , sh + pcbt]) {
+		        cube([et *3, usbwidth, usbheight], center=false);
 		     }
 		}
 
 	}
-	translate(v=[et,et,et]) {
+	translate(v=[et,et,bt]) {
 		difference() {
-			translate(v = [ +15.5, il -3.5,-0.01]) cylinder(r=4,h=sh);
-			translate(v = [ +15.5, il -3.5,+0.5]) cylinder(r=1.5,h=sh);
+			translate(v = [ +15.5, il -3.5,-0.01]) cylinder(r=4.2,h=sh);
+			translate(v = [ +15.5, il -3.5,-2]) {cylinder(r=1.45,h=2*sh);}
 		}
 		difference() {
-			translate(v = [ +15.5,  +3.5,-0.01]) cylinder(r=4,h=sh);
-			translate(v = [ +15.5,  +3.5,0.5]) cylinder(r=1.5,h=sh);
+			translate(v = [ +15.5,  +3.5,-0.01]) cylinder(r=4.2,h=sh);
+			translate(v = [ +15.5,  +3.5,-2]) {cylinder(r=1.45,h=2*sh);}
 		}
 		difference() {
-			translate(v = [iw -6, il -6.5,-0.01]) cylinder(r=4,h=sh);
-			translate(v = [iw -6, il -6.5,0.5]) cylinder(r=1.5,h=sh);
+			translate(v = [iw -6, il -6.5,-0.01]) cylinder(r=4.2,h=sh);
+			translate(v = [iw -6, il -6.5,-2]) {cylinder(r=1.45,h=2*sh); }
 		}
 		difference() {
-			translate(v = [iw -6,  +6.5,-0.01]) cylinder(r=4,h=sh);
-			translate(v = [iw -6,  +6.5,0.5]) cylinder(r=1.5,h=sh);
+			translate(v = [iw -6,  +6.5,-0.01]) cylinder(r=4.2,h=sh);
+			translate(v = [iw -6,  +6.5,-2]) {cylinder(r=1.45,h=2*sh); }
 		}
 	}
 

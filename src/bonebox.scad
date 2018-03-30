@@ -11,6 +11,7 @@ inside_length = 55.3;
 // outside wall thickness
 edge_thickness = 1.6;
 bottom_thickness = 3;
+
 border_size = edge_thickness + 6;
 
 // mini usb height
@@ -61,9 +62,9 @@ module box(iw, il, bt, base_height, bs, et ) {
 		}
 
 		// bottom cutout
-        bottomcutoutlength = inside_length*0.6;
-        bottomcutoutwidth = inside_width*0.6;
-        bottomthickness = 0.8;
+        bottomcutoutlength = inside_length*0.7;
+        bottomcutoutwidth = inside_width*0.7;
+        bottomthickness = -0.8;
 		translate(v=[et + (inside_width -bottomcutoutwidth)/2 , et + (inside_length -bottomcutoutlength)/2,bottomthickness]) { hull() {
                 translate(v=[bottomcutoutwidth - radius2,radius2,0]) cylinder(r=radius2,h=box_height * 1.5);    
                 translate(v=[bottomcutoutwidth - radius2 , bottomcutoutlength - radius2,0]) cylinder(r=radius2,h=box_height * 1.5);
@@ -74,7 +75,7 @@ module box(iw, il, bt, base_height, bs, et ) {
   		
         translate(v=[70,9,0]) rotate(a=[0,0,90]) screwslides();
 
-		translate(v=[et,et,et]) {
+		translate(v=[et,et,bt]) {
 			//ethernet
 		     translate(v = [-et -0.01, 22.5, sh + pcbt - 0.5]) {
 		       cube([et*3, 16, 14], center=false);
@@ -89,20 +90,20 @@ module box(iw, il, bt, base_height, bs, et ) {
 		       cube([et *2, 8, sh], center=false);
 		     }
 		
-		      //microsd: 15mm long, 25.5mm corner offset
-		     translate(v = [iw  -0.01, 25.5, sh - 1.5 *pcbt]) {
+		      //microsd: 15mm long, 26mm corner offset
+		     translate(v = [iw  -0.01, 26, sh - 1.5 *pcbt]) {
 		        cube([et *2, 15, pcbt * 1.5], center=false);
 		     }
-		     translate(v = [iw  +2,  25.5, 1+sh - 1.5 *pcbt]) rotate(a=[0,-50,0]) {
+		     translate(v = [iw  +2,  26, 1+sh - 1.5 *pcbt]) rotate(a=[0,-50,0]) {
 		        cube([et *2, 15, pcbt * 1.5], center=false);
 		     }	
-		     translate(v = [iw -1.9 ,  25.5, +sh-1.5]) rotate(a=[0,50,0]) {
+		     translate(v = [iw -1.9 ,  26, +sh]) rotate(a=[0,50,0]) {
 		        cube([et *3, 15, 4], center=false);
 		     }	
 		      //USB
              usbheight=8;
              usbwidth=14.5;
-		     translate(v = [iw +0.01 - et, 9.5 , sh + pcbt]) {
+		     translate(v = [iw +0.01 - et, 10 , sh + pcbt]) {
 		        cube([et *3, usbwidth, usbheight], center=false);
 		     }
 		}
@@ -110,19 +111,19 @@ module box(iw, il, bt, base_height, bs, et ) {
 	}
 	translate(v=[et,et,bt]) {
 		difference() {
-			translate(v = [ +15.5, il -3.5,-0.01]) cylinder(r=4.2,h=sh);
+			translate(v = [ +15.5, il -3.5,-0.01]) cylinder(r=4,r2=3,h=sh);
 			translate(v = [ +15.5, il -3.5,-2]) {cylinder(r=1.45,h=2*sh);}
 		}
 		difference() {
-			translate(v = [ +15.5,  +3.5,-0.01]) cylinder(r=4.2,h=sh);
+			translate(v = [ +15.5,  +3.5,-0.01]) cylinder(r2=2.2,r1=3.8, h=sh);
 			translate(v = [ +15.5,  +3.5,-2]) {cylinder(r=1.45,h=2*sh);}
 		}
 		difference() {
-			translate(v = [iw -6, il -6.5,-0.01]) cylinder(r=4.2,h=sh);
+			translate(v = [iw -6, il -6.5,-0.01]) cylinder(r=4,r2=3,h=sh);
 			translate(v = [iw -6, il -6.5,-2]) {cylinder(r=1.45,h=2*sh); }
 		}
 		difference() {
-			translate(v = [iw -6,  +6.5,-0.01]) cylinder(r=4.2,h=sh);
+			translate(v = [iw -6,  +6.5,-0.01]) cylinder(r=4,r2=3,h=sh);
 			translate(v = [iw -6,  +6.5,-2]) {cylinder(r=1.45,h=2*sh); }
 		}
 	}
